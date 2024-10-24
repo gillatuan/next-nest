@@ -12,7 +12,8 @@ async function bootstrap() {
   
   // set validation
   app.useGlobalPipes(new ValidationPipe({
-    whitelist: true
+    whitelist: true,
+    forbidNonWhitelisted: true
   }));
 
   // set prefix
