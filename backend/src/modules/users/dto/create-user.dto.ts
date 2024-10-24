@@ -4,17 +4,19 @@ export class CreateUserDto {
     @IsNotEmpty({message: "naame ko dc trong"})
     name: string;
 
-    @IsEmail()
+    @IsNotEmpty({message: "Email ko dc trong"})
+    @IsEmail({}, {message: "Email sai dinh dang"})
     email: string;
 
-    @IsNotEmpty()
+    @IsNotEmpty({message: "password ko dc trong"})
     password: string;
 
-    @IsNotEmpty()
+    @IsNotEmpty({message: "Phone ko dc trong"})
     phone: string;
 
-    @IsNotEmpty()
+    @IsNotEmpty({message: "Address ko dc trong"})
     address: string;
 
     image: string;
+    role: string;
 }
