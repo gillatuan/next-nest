@@ -2,7 +2,7 @@ import { setHashPassword } from '@/helpers/utils';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import aqp from 'api-query-params';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './schemas/user.schema';
@@ -52,7 +52,12 @@ export class UsersService {
     };
   }
 
-  async findAll(query: string, current?: number, pageSize?: number, sort?: string) {
+  async findAll(
+    query: string,
+    current?: number,
+    pageSize?: number,
+    sort?: string,
+  ) {
     const { filter } = aqp(query);
 
     if (filter.current) delete filter.current;
@@ -69,7 +74,7 @@ export class UsersService {
       .find(filter)
       .limit(pageSize)
       .skip(skip)
-      .select("-password")
+      .select('-password')
       .sort(sort);
 
     return {
@@ -78,15 +83,29 @@ export class UsersService {
     };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: string): Promise<void> {
+    if (mongoose.isValidObjectId(id)) {
+      return this.userModel.findOne({_id: id});
+    }
+    throw new BadRequestException('Id ko dung dinh dang mongodb');
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(updateUserDto: UpdateUserDto) {
+    return await this.userModel.updateOne(
+      { _id: updateUserDto._id },
+      { ...updateUserDto },
+    );
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string) {
+    if (mongoose.isValidObjectId(id)) {
+      const checkUserIsAdmin = await this.userModel.findOne({_id: id, role: 'ADMIN'})
+      if (!checkUserIsAdmin) {
+        return this.userModel.deleteOne({_id: id});
+      }
+
+      throw new BadRequestException('Ban khong co quyen xoa');
+    }
+    throw new BadRequestException('Id ko dung dinh dang mongodb');
   }
 }
