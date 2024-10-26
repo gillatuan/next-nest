@@ -89,6 +89,10 @@ export class UsersService {
     }
     throw new BadRequestException('Id ko dung dinh dang mongodb');
   }
+  
+  async findByKey(params: Object) {
+    return await this.userModel.findOne(params)
+  }
 
   async update(updateUserDto: UpdateUserDto) {
     return await this.userModel.updateOne(
