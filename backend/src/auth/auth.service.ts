@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Auth } from '@/auth/schemas/auth.schema';
 import { User } from '@/modules/users/schemas/user.schema';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -13,7 +14,7 @@ export class AuthService {
   ) {}
 
   // apply for using Passport
-  async validateUser(email: string, plainPassword: string): Promise<Auth> {
+  async validateUser(email: string, plainPassword: string): Promise<Omit<User, 'password'>> {
     // check existing user by email
     const user: User = await this.usersService.findByKey({ email });
     if (!user) {
@@ -27,12 +28,12 @@ export class AuthService {
     }
 
     // remove unnecessary password
-    const { password, ...result } = user;
-    return result as Auth;
+    // const { password, ...result } = user;
+    return user;
   }
 
-  async login(user: Auth) {
-    const payload = { email: user.email, sub: user._id };
+  async login(data) {
+    const payload = { email: data.email, sub: data._id };
     return {
       access_token: this.jwtService.sign(payload),
     };
