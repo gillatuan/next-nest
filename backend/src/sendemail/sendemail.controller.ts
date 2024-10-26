@@ -19,7 +19,12 @@ export class SendemailController {
         // from: 'noreply@nestjs.com', // sender address
         subject: 'TuanBDN Testing Nest MailerModule ✔', // Subject line
         text: 'welcome', // plaintext body
-        html: '<b>Hello World TuanBDN</b>', // HTML body content
+        // html: '<b>Hello World TuanBDN</b>', // HTML body content
+        template: 'register',
+        context: {
+          name: 'TuanBDN',
+          activationCode: 123445677
+        }
       })
       .then(() => {})
       .catch(() => {});
