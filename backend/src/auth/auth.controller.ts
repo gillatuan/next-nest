@@ -1,3 +1,4 @@
+import { Public } from '@/helpers/setPubicPage';
 import { Controller, createParamDecorator, ExecutionContext, Get, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './passport/jwt-auth.guard';
@@ -8,6 +9,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
+  @Public()
   @UseGuards(LocalAuthGuard)
   async handleLogin(@Request() req) {    
     return await this.authService.login(req.user);
@@ -19,7 +21,7 @@ export class AuthController {
     return req.logout();
   }
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Get('profile')
   async getProfile(@Request() req) {
     return req.user;
