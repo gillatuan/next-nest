@@ -12,6 +12,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { DeleteUserDto } from './dto/delete-user.dto';
+import { Public } from '@/helpers/setPubicPage';
 
 @Controller('users')
 export class UsersController {
@@ -45,5 +46,11 @@ export class UsersController {
   @Delete()
   remove(@Body() @Body() deleteUserDto: DeleteUserDto) {
     return this.usersService.remove(deleteUserDto._id);
+  }
+
+  @Public()
+  @Post('register')
+  handleRegister(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.handleRegister(createUserDto);
   }
 }

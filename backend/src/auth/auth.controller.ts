@@ -1,17 +1,20 @@
 import { Public } from '@/helpers/setPubicPage';
-import { Controller, createParamDecorator, ExecutionContext, Get, Post, Request, UseGuards } from '@nestjs/common';
+import { UsersService } from '@/modules/users/users.service';
+import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { JwtAuthGuard } from './passport/jwt-auth.guard';
 import { LocalAuthGuard } from './passport/local-auth.guard';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService,
+  ) {}
 
   @Post('login')
   @Public()
   @UseGuards(LocalAuthGuard)
-  async handleLogin(@Request() req) {    
+  async handleLogin(@Request() req) {
     return await this.authService.login(req.user);
   }
 
