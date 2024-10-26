@@ -14,8 +14,10 @@ import { OrdersModule } from '@/modules/orders/orders.module';
 import { RestaurantsModule } from '@/modules/restaurants/restaurants.module';
 import { ReviewsModule } from '@/modules/reviews/reviews.module';
 import { UsersModule } from '@/modules/users/users.module';
+import { MailerModule } from '@nestjs-modules/mailer';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/passport/jwt-auth.guard';
+import { SendemailModule } from './sendemail/sendemail.module';
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { JwtAuthGuard } from './auth/passport/jwt-auth.guard';
     RestaurantsModule,
     ReviewsModule,
     ConfigModule.forRoot({ isGlobal: true }),
+    AuthModule,
+    SendemailModule,
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -36,7 +40,41 @@ import { JwtAuthGuard } from './auth/passport/jwt-auth.guard';
       }),
       inject: [ConfigService],
     }),
-    AuthModule,
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        verifyTransporters: true,
+        transport: {
+          /* host: configService.get<string>('MAILDEV_SMTP'),
+          port: configService.get<string>('MAILDEV_PORT'),
+          ignoreTLS: configService.get<string>('MAILDEV_IGNORE_TLS'),
+          secure: configService.get<string>('MAILDEV_SECURE'),
+          auth: {
+            user: configService.get<string>('MAILDEV_USER'),
+            pass: configService.get<string>('MAILDEV_PASS'),
+          }, */
+          host: 'smtp.gmail.com',
+          port: 465,
+          ignoreTLS: true,
+          secure: true,
+          auth: {
+            user: 'gangtergilla5@gmail.com',
+            pass: 'ofksejujymaprpqy',
+          },
+        },
+        defaults: {
+          from: '"No Reply" <no-reply@localhost>',
+        },
+        // preview: true,
+        /* template: {
+          dir: process.cwd() + '/template/',
+          adapter: new HandlebarsAdapter(), // or new PugAdapter() or new EjsAdapter()
+          options: {
+            strict: true,
+          },
+        }, */
+      }),
+    }),
   ],
   controllers: [AppController],
   providers: [
