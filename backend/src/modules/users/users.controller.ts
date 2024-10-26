@@ -1,18 +1,18 @@
+import { Public } from '@/helpers/setPubicPage';
+import { CreateUserDto } from '@/modules/users/dto/create-user.dto';
+import { DeleteUserDto } from '@/modules/users/dto/delete-user.dto';
+import { UpdateUserDto } from '@/modules/users/dto/update-user.dto';
+import { UsersService } from '@/modules/users/users.service';
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
   Query,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { DeleteUserDto } from './dto/delete-user.dto';
-import { Public } from '@/helpers/setPubicPage';
 
 @Controller('users')
 export class UsersController {
@@ -52,5 +52,11 @@ export class UsersController {
   @Post('register')
   handleRegister(@Body() createUserDto: CreateUserDto) {
     return this.usersService.handleRegister(createUserDto);
+  }
+
+  @Public()
+  @Post('verify')
+  handleActive(@Body() data: { code: string }) {
+    return this.usersService.handleActive(data.code);
   }
 }

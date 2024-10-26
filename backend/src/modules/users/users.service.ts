@@ -138,7 +138,7 @@ export class UsersService {
     const hashPassword = await setHashPassword(password);
 
     // create user
-    const codeId = uuidv4()
+    const codeId = uuidv4();
     const user = await this.userModel.create({
       name,
       email,
@@ -177,5 +177,23 @@ export class UsersService {
       address,
       image,
     };
+  }
+
+  async handleActive(code: string) {
+    const user = await this.userModel.findOne({ codeId: code });
+    if (!user) {
+      throw new BadRequestException('Khong co code nao dị như zậy');
+    }
+
+    // check expired
+    const isBeforeExpired = dayjs().isBefore(user.codeExpired);
+    if (!isBeforeExpired) {
+      throw new BadRequestException('Code da het han');
+    }
+
+    // update to active user
+    await this.userModel.updateOne({ codeId: code }, { isActive: true });
+
+    return isBeforeExpired
   }
 }
