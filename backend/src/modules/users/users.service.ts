@@ -26,7 +26,7 @@ export class UsersService {
 
     return false;
   };
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto): Promise<CreateUserDto> {
     const { name, email, password, phone, address, image, role } =
       createUserDto;
 
@@ -50,7 +50,6 @@ export class UsersService {
       image,
     });
     return {
-      _id: user._id,
       name,
       email,
       role,
