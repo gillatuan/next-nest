@@ -1,41 +1,31 @@
-import { Public } from '@/helpers/setPubicPage';
-import { CreateUserDto } from '@/modules/users/dto/create-user.dto';
-import { DeleteUserDto } from '@/modules/users/dto/delete-user.dto';
-import { UpdateUserDto } from '@/modules/users/dto/update-user.dto';
-import { UsersService } from '@/modules/users/users.service';
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { UsersService } from './users.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { Public } from '@/decorator/customize';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @Post()
+  @Public()
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
 
   @Get()
-  findAll(
+  async findAll(
     @Query() query: string,
-    @Query('current') current?: string,
-    @Query('pageSize') pageSize?: string,
-    @Query('sort') sort?: string,
+    @Query("current") current: string,
+    @Query("pageSize") pageSize: string,
   ) {
-    return this.usersService.findAll(query, +current, +pageSize, sort);
+    return this.usersService.findAll(query, +current, +pageSize);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id);
+    return this.usersService.findOne(+id);
   }
 
   @Patch()
@@ -43,20 +33,8 @@ export class UsersController {
     return this.usersService.update(updateUserDto);
   }
 
-  @Delete()
-  remove(@Body() @Body() deleteUserDto: DeleteUserDto) {
-    return this.usersService.remove(deleteUserDto._id);
-  }
-
-  @Public()
-  @Post('register')
-  handleRegister(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.handleRegister(createUserDto);
-  }
-
-  @Public()
-  @Post('verify')
-  handleActive(@Body() data: { code: string }) {
-    return this.usersService.handleActive(data.code);
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.usersService.remove(id);
   }
 }

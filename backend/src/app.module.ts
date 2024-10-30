@@ -1,23 +1,37 @@
+import { Module } from '@nestjs/common';
 import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
-import { Module } from '@nestjs/common';
+import { UsersModule } from '@/modules/users/users.module';
+import { LikesModule } from '@/modules/likes/likes.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-
+import { MenuItemOptionsModule } from '@/modules/menu.item.options/menu.item.options.module';
+import { MenuItemsModule } from '@/modules/menu.items/menu.items.module';
+import { MenusModule } from '@/modules/menus/menus.module';
+import { OrderDetailModule } from '@/modules/order.detail/order.detail.module';
+import { OrdersModule } from '@/modules/orders/orders.module';
+import { RestaurantsModule } from '@/modules/restaurants/restaurants.module';
+import { ReviewsModule } from '@/modules/reviews/reviews.module';
 import { AuthModule } from '@/auth/auth.module';
-import { UsersModule } from '@/modules/users/users.module';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { JwtAuthGuard } from './auth/passport/jwt-auth.guard';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
-import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from './auth/passport/jwt-auth.guard';
-import { SendemailModule } from './sendemail/sendemail.module';
+import { TransformInterceptor } from '@/core/transform.interceptor';
 
 @Module({
   imports: [
     UsersModule,
-    ConfigModule.forRoot({ isGlobal: true }),
+    LikesModule,
+    MenuItemOptionsModule,
+    MenuItemsModule,
+    MenusModule,
+    OrderDetailModule,
+    OrdersModule,
+    RestaurantsModule,
+    ReviewsModule,
     AuthModule,
-    SendemailModule,
+    ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -27,39 +41,32 @@ import { SendemailModule } from './sendemail/sendemail.module';
     }),
     MailerModule.forRootAsync({
       imports: [ConfigModule],
-      inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        verifyTransporters: true,
         transport: {
-          host: configService.get<string>('MAILDEV_SMTP'),
-          port: configService.get<string>('MAILDEV_PORT'),
-          ignoreTLS: configService.get<string>('MAILDEV_IGNORE_TLS'),
-          secure: configService.get<string>('MAILDEV_SECURE'),
-          auth: {
-            user: configService.get<string>('MAILDEV_USER'),
-            pass: configService.get<string>('MAILDEV_PASS'),
-          },
-          /* host: 'smtp.gmail.com',
+          host: "smtp.gmail.com",
           port: 465,
-          ignoreTLS: true,
           secure: true,
+          // ignoreTLS: true,
+          // secure: false,
           auth: {
-            user: 'gangtergilla5@gmail.com',
-            pass: 'ofksejujymaprpqy',
-          }, */
+            user: configService.get<string>('MAIL_USER'),
+            pass: configService.get<string>('MAIL_PASSWORD'),
+          },
         },
         defaults: {
           from: '"No Reply" <no-reply@localhost>',
         },
         // preview: true,
         template: {
-          dir: process.cwd() + '/src/sendemail/templates/',
+          dir: process.cwd() + '/src/mail/templates/',
           adapter: new HandlebarsAdapter(), // or new PugAdapter() or new EjsAdapter()
           options: {
             strict: true,
           },
         },
       }),
+      inject: [ConfigService],
+
     }),
   ],
   controllers: [AppController],
@@ -69,6 +76,10 @@ import { SendemailModule } from './sendemail/sendemail.module';
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransformInterceptor,
+    }
   ],
 })
-export class AppModule {}
+export class AppModule { }

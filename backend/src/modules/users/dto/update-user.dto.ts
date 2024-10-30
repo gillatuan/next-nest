@@ -1,21 +1,20 @@
-import { OmitType } from '@nestjs/swagger';
-import { IsMongoId, IsNotEmpty, IsOptional, ValidationOptions } from 'class-validator';
-import { CreateUserDto } from './create-user.dto';
+import { IsMongoId, IsNotEmpty, IsOptional } from "class-validator";
 
-export class UpdateUserDto extends OmitType(CreateUserDto, ['password']) {
-  @IsMongoId({ message: '_id ko dung dinh dang' } as ValidationOptions)
-  @IsNotEmpty({ message: '_id ko dc trong' })
-  _id: string;
 
-  @IsOptional()
-  name: string;
+export class UpdateUserDto {
+    @IsMongoId({ message: "_id không hợp lệ" })
+    @IsNotEmpty({ message: "_id không được để trống" })
+    _id: string;
 
-  @IsOptional()
-  phone: string;
+    @IsOptional()
+    name: string;
 
-  @IsOptional()
-  address: string;
+    @IsOptional()
+    phone: string;
 
-  @IsOptional()
-  image: string;
+    @IsOptional()
+    address: string;
+
+    @IsOptional()
+    image: string;
 }

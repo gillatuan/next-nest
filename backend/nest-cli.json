@@ -4,7 +4,9 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "deleteOutDir": true,
-    "assets": ["sendemail/templates/**/*"],
+    "assets": [
+      "mail/templates/**/*"
+    ],
     "watchAssets": true
   }
 }
