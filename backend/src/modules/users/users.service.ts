@@ -115,7 +115,7 @@ export class UsersService {
     //check id
     if (mongoose.isValidObjectId(_id)) {
       //delete
-      return this.userModel.deleteOne({ _id });
+      return this.userModel.softDelete({ _id });
     } else {
       throw new BadRequestException('Id không đúng định dạng mongodb');
     }
