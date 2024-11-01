@@ -11,6 +11,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { TransformInterceptor } from '@/core/transform.interceptor';
 import { softDeletePlugin } from 'soft-delete-plugin-mongoose';
+import { CompaniesModule } from './companies/companies.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { softDeletePlugin } from 'soft-delete-plugin-mongoose';
       }),
       inject: [ConfigService],
     }),
+    CompaniesModule,
   ],
   providers: [
     AppService,
