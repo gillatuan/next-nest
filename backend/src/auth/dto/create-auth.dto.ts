@@ -1,7 +1,7 @@
+import { Prop } from "@nestjs/mongoose";
 import { IsNotEmpty, IsOptional } from "class-validator";
 
 export class CreateAuthDto {
-
     @IsNotEmpty({ message: "email không được để trống" })
     email: string;
 
@@ -10,6 +10,16 @@ export class CreateAuthDto {
 
     @IsOptional()
     name: string;
+
+    @IsNotEmpty()
+    phone: string;
+
+    @IsNotEmpty()
+    address: string;
+
+    @IsNotEmpty()
+    @Prop({default: 'Member'})
+    role?: string;
 }
 
 export class CodeAuthDto {

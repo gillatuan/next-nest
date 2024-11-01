@@ -7,15 +7,22 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Nest Debug",
-      "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}/backend/src/**/*.ts",
-      "outFiles": ["${workspaceFolder}/backend/**/*.ts", "${workspaceFolder}/backend/**/*.tsx"],
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "start:debug", "--", "--inspect-brk"],
+      "name": "Tasks Debug",
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": [
+        "start:debug",
+        "--",
+        "--inspect-brk"
+      ],
       "console": "integratedTerminal",
       "restart": true,
       "autoAttachChildProcesses": true,
-    }
+      "cwd": "${workspaceFolder}/../next-nest/backend",
+      "sourceMapPathOverrides": {
+        "meteor://💻app/*": "${workspaceFolder}/*",
+        "webpack:///./~/*": "${workspaceFolder}/node_modules/*",
+        "webpack://?:*/*": "${workspaceFolder}/*"
+      }
+    },
   ]
 }
