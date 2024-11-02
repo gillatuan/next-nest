@@ -3,6 +3,7 @@ import {
   ExecutionContext,
   Injectable,
   MethodNotAllowedException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
@@ -29,7 +30,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   handleRequest(err, user, info) {
     // You can throw an exception based on either "info" or "err" arguments
     if (err || !user) {
-      throw err || new MethodNotAllowedException();
+      throw err || new UnauthorizedException('Token ko hop le / Header ko co token');
     }
     return user;
   }

@@ -7,21 +7,23 @@ import { ConfigService } from '@nestjs/config';
 import { LocalStrategy } from './passport/local.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './passport/jwt.strategy';
+import { RolesModule } from '@/modules/roles/roles.module';
 
 @Module({
   imports: [
     UsersModule,
+    PassportModule,
+    RolesModule,
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
         global: true,
-        secret: configService.get<string>('JWT_SECRET'),
+        secret: configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
         signOptions: {
-          expiresIn: configService.get<string>('JWT_ACCESS_TOKEN_EXPIRED'),
+          expiresIn: configService.get<string>('JWT_ACCESS_EXPIRE'),
         },
       }),
       inject: [ConfigService],
     }),
-    PassportModule
   ],
 
   controllers: [AuthController],

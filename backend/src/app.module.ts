@@ -11,7 +11,10 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { TransformInterceptor } from '@/core/transform.interceptor';
 import { softDeletePlugin } from 'soft-delete-plugin-mongoose';
-import { CompaniesModule } from './companies/companies.module';
+import { CompaniesModule } from './modules/companies/companies.module';
+import { RolesModule } from './modules/roles/roles.module';
+import { DatabasesModule } from './modules/databases/databases.module';
+import { PermissionsModule } from './modules/permissions/permissions.module';
 
 @Module({
   imports: [
@@ -25,11 +28,15 @@ import { CompaniesModule } from './companies/companies.module';
         connectionFactory: (conn) => {
           conn.plugin(softDeletePlugin)
           return conn
-        }
+        },
+        
       }),
       inject: [ConfigService],
     }),
     CompaniesModule,
+    RolesModule,
+    PermissionsModule,
+    DatabasesModule,
   ],
   providers: [
     AppService,

@@ -2,21 +2,36 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { IUser } from '@/modules/users/dto/users';
+// import { RolesService } from '@/modules/roles/roles.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
     constructor(
-        private configService: ConfigService
+        private configService: ConfigService,
+        // private rolesService: RolesService
     ) {
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
-            secretOrKey: configService.get<string>('JWT_SECRET'),
-            passReqToCallback: true
+            secretOrKey: configService.get<string>("JWT_ACCESS_TOKEN_SECRET"),
         });
     }
 
-    async validate(request, payload, done_callback) {
-        return { _id: payload.sub };
+    async validate(payload: IUser) {
+        const { _id, name, email, role } = payload;
+        // cần gán thêm permissions vào req.user
+        const userRole = role as unknown as { _id: string; name: string }
+        // const temp = (await this.rolesService.findOne(userRole._id)).toObject();
+
+        //req.user
+        return {
+            _id,
+            name,
+            email,
+            role,
+            // permissions: temp?.permissions ?? []
+        };
     }
+
 }
